@@ -1,0 +1,16 @@
+:root {
+  --app-bg: #f3f8f1; --app-surface: #ffffff; --app-text: #1d2a1f; --app-muted: #6b7a6d;
+  --app-accent: #2f88e8; --app-accent-text: #fff;
+  --leaf: #5cbf60; --leaf-dark: #3f9d4b; --pot: #d9774b; --pot-dark: #b85f38; --soil: #6b4a33;
+}
+:root[data-theme='dark'] { --app-bg: #17212b; --app-surface: #232e3c; --app-text: #e9eef3; --app-muted: #8a99a8; --soil: #4a3424; }
+* { box-sizing: border-box; }
+html, body, #app { height: 100%; margin: 0; }
+body {
+  font: 15px/1.4 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; color: var(--app-text);
+  background: var(--app-bg); -webkit-tap-highlight-color: transparent; overscroll-behavior: none; user-select: none;
+}
+button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; padding: 0; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}

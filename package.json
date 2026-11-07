@@ -1,0 +1,12 @@
+{
+  "name": "iemanchat-miniapps",
+  "private": true,
+  "packageManager": "pnpm@9.15.4",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "dev:garden": "pnpm --filter garden dev",
+    "dev:lunar": "pnpm --filter lunar dev",
+    "build": "pnpm -r --filter \"./apps/*\" build && node scripts/collect.mjs",
+    "typecheck": "pnpm -r typecheck"
+  }
+}

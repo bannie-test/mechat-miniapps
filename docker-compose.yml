@@ -1,0 +1,8 @@
+# VPS: `docker compose up -d --build` → http://<server>:8081/garden/ and /lunar/
+services:
+  miniapps:
+    build: .
+    image: iemanchat-miniapps
+    env_file: .env
+    restart: unless-stopped
+    ports: ["8081:80"]

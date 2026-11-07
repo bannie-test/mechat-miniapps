@@ -1,0 +1,23 @@
+{
+  "name": "garden",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5174",
+    "build": "vite build",
+    "preview": "vite preview --port 5174",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@iemanchat/miniapp-sdk": "workspace:*",
+    "@supabase/supabase-js": "^2.49.4",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "typescript": "~5.7.3",
+    "vite": "^6.2.0",
+    "vue-tsc": "^2.2.2"
+  }
+}
