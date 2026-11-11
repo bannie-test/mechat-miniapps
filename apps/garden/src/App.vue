@@ -28,6 +28,7 @@ const t = ref<Dict>(dicts[lang])
 document.documentElement.dataset.theme = new URLSearchParams(location.search).get('theme') ?? 'light'
 
 const status = ref<'loading' | 'ready' | 'not-embedded' | 'error'>('loading')
+const errorDetail = ref('')
 const garden = ref<Garden | null>(null)
 const index = ref(0)
 const busy = ref(false)
@@ -62,7 +63,9 @@ onMounted(async () => {
   try {
     app = await connect({ allowedOrigins: allowed })
   } catch (e) {
-    status.value = (e as Error).message === 'NOT_EMBEDDED' ? 'not-embedded' : 'error'
+    const m = (e as Error).message
+    if (m === 'NOT_EMBEDDED') status.value = 'not-embedded'
+    else fail(m === 'HOST_TIMEOUT' ? `HOST_TIMEOUT (allowed origins: ${allowed.join(', ') || 'any'})` : m, e)
     return
   }
   t.value = dicts[app.locale]
@@ -79,10 +82,17 @@ onMounted(async () => {
   try {
     garden.value = await rpc<Garden>('plant_get_state', { p_tz: Intl.DateTimeFormat().resolvedOptions().timeZone })
     status.value = 'ready'
-  } catch {
-    status.value = 'error'
+  } catch (e) {
+    const err = e as { code?: string; message?: string }
+    fail(`plant_get_state: ${[err.code, err.message].filter(Boolean).join(' ')}`, e)
   }
 })
+
+function fail(detail: string, e: unknown) {
+  console.error('[garden]', detail, e)
+  errorDetail.value = detail
+  status.value = 'error'
+}
 
 async function water() {
   const p = plant.value
@@ -175,7 +185,7 @@ const thirsty = computed(() => !!plant.value && !plant.value.watered_today && !p
   <main class="garden">
     <div v-if="status === 'loading'" class="center"><div class="sprout-loader">🌱</div><p>{{ t.loading }}</p></div>
     <div v-else-if="status === 'not-embedded'" class="center"><div class="big">🪴</div><p>{{ t.notEmbedded }}</p></div>
-    <div v-else-if="status === 'error'" class="center"><div class="big">🥀</div><p>{{ t.error }}</p></div>
+    <div v-else-if="status === 'error'" class="center"><div class="big">🥀</div><p>{{ t.error }}</p><p v-if="errorDetail" class="error-detail">{{ errorDetail }}</p></div>
 
     <template v-else-if="garden">
       <header class="top">
