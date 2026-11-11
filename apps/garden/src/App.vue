@@ -65,7 +65,11 @@ onMounted(async () => {
   } catch (e) {
     const m = (e as Error).message
     if (m === 'NOT_EMBEDDED') status.value = 'not-embedded'
-    else fail(m === 'HOST_TIMEOUT' ? `HOST_TIMEOUT (allowed origins: ${allowed.join(', ') || 'any'})` : m, e)
+    else if (m.startsWith('HOST_TIMEOUT')) {
+      // Referrer is normally the embedding chat's origin; location is where this app really loaded.
+      const parent = document.referrer ? new URL(document.referrer).origin : 'unknown'
+      fail(`${m} · allowed: ${allowed.join(', ') || 'any'} · chat: ${parent} · app: ${location.origin}`, e)
+    } else fail(m, e)
     return
   }
   t.value = dicts[app.locale]
