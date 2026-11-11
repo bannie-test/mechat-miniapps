@@ -14,3 +14,10 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
+
+.error-detail {
+  max-width: 320px;
+  font: 12px ui-monospace, monospace;
+  opacity: 0.6;
+  word-break: break-word;
+}
