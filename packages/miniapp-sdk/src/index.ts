@@ -55,14 +55,19 @@ export function connect(opts: ConnectOptions = {}): Promise<MiniAppClient> {
     // script ran, so a single 'ready' can be lost. Keep announcing until 'init' arrives.
     const sayReady = () => window.parent.postMessage({ ns: NS, type: 'ready' } satisfies AppMessage, '*')
     const retry = window.setInterval(sayReady, 250)
+    let rejectedOrigin: string | null = null
     const timer = window.setTimeout(() => {
       window.clearInterval(retry)
-      reject(new Error('HOST_TIMEOUT'))
+      // Most common cause: the chat runs on an origin missing from allowedOrigins.
+      reject(new Error(rejectedOrigin ? `HOST_TIMEOUT: ignored host origin ${rejectedOrigin}` : 'HOST_TIMEOUT'))
     }, timeoutMs)
 
     window.addEventListener('message', (e: MessageEvent) => {
       if (e.source !== window.parent || !isNsMessage(e.data)) return
-      if (allowed.length && !allowed.includes(e.origin)) return
+      if (allowed.length && !allowed.includes(e.origin)) {
+        rejectedOrigin = e.origin
+        return
+      }
       const msg = e.data as HostMessage
       switch (msg.type) {
         case 'init': {
